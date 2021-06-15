@@ -80,7 +80,7 @@ Jonathan Ventura<sup>1</sup></p>
 <sup>2</sup>University of Otago, Dunedin, New Zealand</p>
 <hr>
 <div style="">
-    <img src="images/representative_image_small.jpeg" style="max-width: 75%; height: auto; display: block;  margin-left: auto; margin-right: auto;">
+    <img src="assets/representative_image_small.jpeg" style="max-width: 75%; height: auto; display: block;  margin-left: auto; margin-right: auto;">
 </div>
 <h3>Abstract</h3>
 <p>We introduce a method to automatically convert a single panoramic input into a multi-cylinder image representation that supports real-time, free-viewpoint view synthesis for virtual reality.  We apply an existing convolutional neural network trained on pinhole images to a cylindrical panorama with wrap padding to ensure agreement between the left and right edges.    The network outputs a stack of semi-transparent panoramas at varying depths which can be easily rendered and composited with over blending.  Initial experiments show that the method produces convincing parallax and cleaner object boundaries than a textured mesh representation.</p>
@@ -112,7 +112,7 @@ Jonathan Ventura<sup>1</sup></p>
             })
             return btn;
         })
-        img.src = "./matterport2k/" + i + "/thumbnail.jpg";
+        img.src = "./assets/matterport2k/" + i + "/thumbnail.jpg";
         const wrapper = document.createElement("div")
         wrapper.className = "thumbnail"
         buttonWrapper.append(...buttons);
