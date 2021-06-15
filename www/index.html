@@ -1,0 +1,128 @@
+<html>
+<head>
+<title>Panoramic VR Tests</title>
+<style>
+body {
+  font-family: -apple-system, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+margin: 0 auto;
+padding: 30px 20px 50px;
+max-width: 800px;
+}
+h1 { 
+text-align: center;
+}
+.authors {
+text-align: center;
+}
+
+.thumbnails {
+    padding: 10px;
+    width: 100%;
+    margin: auto;
+}
+
+.thumbnail {
+    position: relative;
+    width: 100%;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.082);
+    margin: 20px 0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.thumbnail img {
+    display: inline-block;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.button-wrapper {
+    display: flex;
+    background:white;
+
+}
+
+.button-wrapper button {
+    padding: 10px 15px;
+    font-size: 16px;
+    font-family: inherit;
+    margin:0;
+    background-color: white;
+    color: #3273dc;
+    border: 1px solid rgb(241, 241, 241);
+    width: 100%;
+    cursor: pointer;
+
+}
+.button-wrapper button:nth-child(1) {
+    border-bottom-left-radius: 10px;
+}
+
+.button-wrapper button:nth-child(3) {
+    border-bottom-right-radius: 10px;
+}
+
+
+
+</style>
+</head>
+<body>
+<h1>PanoSynthVR: View Synthesis From A Single Input Panorama with Multi-Cylinder Images</h1>
+<p class=authors>Richa Gadgil<sup>1</sup><br>
+Reesa John<sup>1</sup><br>
+Stefanie Zollmann<sup>2</sup><br>
+Jonathan Ventura<sup>1</sup></p>
+<p class=authors>
+<sup>1</sup>California Polytechnic State University, San Luis Obispo, CA, USA<br>
+<sup>2</sup>University of Otago, Dunedin, New Zealand</p>
+<hr>
+<div style="">
+    <img src="images/representative_image_small.jpeg" style="max-width: 75%; height: auto; display: block;  margin-left: auto; margin-right: auto;">
+</div>
+<h3>Abstract</h3>
+<p>We introduce a method to automatically convert a single panoramic input into a multi-cylinder image representation that supports real-time, free-viewpoint view synthesis for virtual reality.  We apply an existing convolutional neural network trained on pinhole images to a cylindrical panorama with wrap padding to ensure agreement between the left and right edges.    The network outputs a stack of semi-transparent panoramas at varying depths which can be easily rendered and composited with over blending.  Initial experiments show that the method produces convincing parallax and cleaner object boundaries than a textured mesh representation.</p>
+<h3>WebXR examples</h3>
+<p>The WebXR viewer is best experienced in the Mozilla Firefox browser or in the Firefox Reality browser on a VR headset such as the Oculus Quest / Quest 2.</p>
+    <div class="thumbnails">
+    </div>
+    
+
+
+<script>
+    let selectedImage = -1;
+    const thumbnails = document.querySelector(".thumbnails");
+    const form = document.querySelector("form")
+    for(let i = 0; i < 9; i++) {
+        let img = new Image();
+        let buttonWrapper = document.createElement("div")
+        let dict = {'multi-cylinder':'mpi','depth':'depth','none':'plain'}
+        buttonWrapper.className = "button-wrapper"
+        const buttons = ["multi-cylinder", "depth", "none"].map(mode => {
+            const btn = document.createElement("button")
+            btn.innerText = mode;
+            btn.addEventListener("click", () => {
+                const destination = new URL("cylindrical_view_synthesis.html", window.location)
+                destination.searchParams.append("mode", dict[mode]);
+                destination.searchParams.append("scene", i);
+                console.log(destination.toString());
+                window.open(destination.toString());
+            })
+            return btn;
+        })
+        img.src = "./matterport2k/" + i + "/thumbnail.jpg";
+        const wrapper = document.createElement("div")
+        wrapper.className = "thumbnail"
+        buttonWrapper.append(...buttons);
+        wrapper.append(img, buttonWrapper);
+        thumbnails.append(wrapper)
+    }
+
+
+
+
+</script>
+</body>
+</html>
+
