@@ -103,7 +103,7 @@ Jonathan Ventura<sup>1</sup></p>
             const btn = document.createElement("button")
             btn.innerText = mode;
             btn.addEventListener("click", () => {
-                const destination = new URL("cylindrical_view_synthesis.html", window.location)
+                const destination = new URL("renderer.html", window.location)
                 destination.searchParams.append("mode", dict[mode]);
                 destination.searchParams.append("scene", i);
                 console.log(destination.toString());
