@@ -1,0 +1,7 @@
+name: panosynthvr
+dependencies:
+ - tensorflow-gpu==2.2.0
+ - pip
+ - pip:
+   - tensorflow-addons==0.10.0
+   - opencv-python
