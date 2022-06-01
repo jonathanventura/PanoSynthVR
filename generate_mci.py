@@ -7,6 +7,66 @@ import cv2
 from cv2 import imwrite
 import glob
 from zipfile import ZipFile
+import sys
+import time
+import threading
+import webbrowser
+import shutil
+from http.server import HTTPServer, SimpleHTTPRequestHandler
+
+
+
+def loadWebsite(foldername, imagename):
+    """ Copy images over to asset folder and display it in a website using WebXR"""
+    imagename = os.path.basename(imagename).split('.')[0]
+
+    print (foldername)
+    print (imagename)
+
+    ip = "127.0.0.1"
+    port = 3600
+    #folder = "outputc"
+    folder = foldername
+    #imagename = "bicyle"
+    srcfolder =folder+'/'+imagename
+
+    webfiles = "docs/assets"
+    dest = webfiles + '/'+ imagename
+    destDirAbs = os.path.abspath(dest)
+    #input_path
+    #args.output
+    url = f"http://{ip}:{port}/docs/renderer.html?mode=mpi&scene=-1&name=" + imagename
+
+    src_files = os.listdir(srcfolder)
+
+    if not os.path.exists(destDirAbs):
+        os.makedirs(destDirAbs)
+        print ('Created:'+ destDirAbs)
+    for file_name in src_files:
+        full_file_name = os.path.join(srcfolder, file_name)
+        if os.path.isfile(full_file_name):
+
+            full_outfile_name = os.path.join(destDirAbs, file_name)
+            print("copying ... " + full_outfile_name)
+            shutil.copy(full_file_name, full_outfile_name)
+
+
+    def start_server():
+        server_address = (ip, port)
+        httpd = HTTPServer(server_address, SimpleHTTPRequestHandler)
+        httpd.serve_forever()
+
+
+    threading.Thread(target=start_server).start()
+    webbrowser.open_new(url)
+
+    while True:
+        try:
+            time.sleep(1)
+        except KeyboardInterrupt:
+            sys.exit(0)
+
+
 
 def load_model():
     """ Build MPI model and load pre-trained weights."""
@@ -15,7 +75,7 @@ def load_model():
 
     model = tf.keras.Model(inputs=inputs, outputs=output)
     model.load_weights('single_view_mpi_full_keras/single_view_mpi_keras_weights')
-    
+
     return model
 
 def generate(model, input_path, output_path, output_width, output_height, build_atlas=True):
@@ -36,13 +96,13 @@ def generate(model, input_path, output_path, output_width, output_height, build_
         paths = sorted(glob.glob(os.path.join(args.input,'*.png')))
     else:
         paths = [input_path]
-    
+
     for path in paths:
         print(path)
 
         # Load image
         input_rgb = tf.image.decode_image(tf.io.read_file(path), dtype=tf.float32)
-        
+
         # Resize if necessary
         input_rgb = tf.image.resize(input_rgb, (output_height,output_width), method='area')
 
@@ -55,18 +115,18 @@ def generate(model, input_path, output_path, output_width, output_height, build_
 
         # Generate MCI layers
         layers_padded = model(input_rgb_padded[tf.newaxis])[0] # (L, H, W, 4)
-        
+
         # Remove padding
         layers = layers_padded[:,:,padding:-padding,:]
 
         # Get disparity from layers
         disparity = mpi.disparity_from_layers(layers, depths)
         disparity = tf.squeeze(disparity)
-        
+
         # Make output directory
         my_output_path = os.path.join(output_path,os.path.basename(path).split('.')[0])
         os.makedirs(my_output_path,exist_ok=True)
-        
+
         # Save input image
         input_bgr = cv2.cvtColor((input_rgb.numpy()*255).astype('uint8'),cv2.COLOR_RGB2BGR)
         imwrite(f'{my_output_path}/input.png',input_bgr)
@@ -124,14 +184,18 @@ if __name__ == '__main__':
     parser.add_argument('--output', '-o',
                         required=True,
                         help='output directory')
+    parser.add_argument('--showWeb', '-s', required=False, help='show website')
 
     args = parser.parse_args()
- 
+
     # Create the output directory
     os.makedirs(args.output,exist_ok=True)
-     
+
     # Load Keras model
     model = load_model()
 
     generate(model=model, input_path=args.input, output_path=args.output, build_atlas=True, output_width=args.width, output_height=args.height)
 
+    #show website optional
+    if args.showWeb == "1":
+        loadWebsite(foldername=args.output, imagename=args.input)

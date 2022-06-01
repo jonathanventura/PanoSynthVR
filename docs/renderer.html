@@ -18,7 +18,7 @@
             void main() {
                 vUv = vec2(1.-uv.x,uv.y);
                 vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
-                gl_Position = projectionMatrix * modelViewPosition; 
+                gl_Position = projectionMatrix * modelViewPosition;
             }
         </script>
 
@@ -37,7 +37,7 @@
                 vUv = (vUvTransform * vec3(uv.x,uv.y,1.)).xy;
                 //vUv = uv;
                 vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
-                gl_Position = projectionMatrix * modelViewPosition; 
+                gl_Position = projectionMatrix * modelViewPosition;
             }
         </script>
 
@@ -58,7 +58,7 @@
             void main() {
                 vUv = vec2(1.-uv.x,1.-uv.y); // flip X and Y
                 vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
-                gl_Position = projectionMatrix * modelViewPosition; 
+                gl_Position = projectionMatrix * modelViewPosition;
             }
         </script>
 
@@ -87,7 +87,7 @@
                 vUv = vec2(1.-uv.x,uv.y);
                 float disparity = texture2D(tDisparity,vUv).r;
                 vec4 modelViewPosition = mvm * vec4(position/disparity, 1.0);
-                gl_Position = projectionMatrix * modelViewPosition; 
+                gl_Position = projectionMatrix * modelViewPosition;
             }
         </script>
 
@@ -129,7 +129,7 @@
             import { Cylinder } from './assets/js/Cylinder.js';
 
             let camera, scene, renderer, sphere, clock;
-        
+
             const params = parseQueryString();
             var scale = 3.0;
             if ( params['scale'] )
@@ -137,15 +137,19 @@
                 scale = parseFloat(params['scale']);
                 if ( isNaN(scale) ) scale = 3.0;
             }
-            
+
             let mode = params['mode'];
             let sceneNum = parseInt(params['scene']);
+            let sceneName = params['name'];
 
             let parent = new THREE.Group();
 
             const manager = new THREE.LoadingManager();
             const loader = new THREE.TextureLoader(manager);
-            const baseDir = './assets/matterport2k/'
+            let baseDir = './assets/matterport2k/'
+
+            if (sceneNum ==-1)
+                baseDir = './assets/' + sceneName
 
             let depths = [
                 100,
@@ -199,7 +203,7 @@
                         true
                     );
 
-                    // Load and assign the texture 
+                    // Load and assign the texture
                     let cylinderMat = new THREE.ShaderMaterial({
                         side: THREE.BackSide,
                         uniforms: { tColor: { value: null } },
@@ -322,9 +326,12 @@
                     }
 
                     console.log('downloading .zip ...')
+                    let directory = baseDir
+                    if(sceneNum!=-1)
+                        directory = baseDir + sceneNum.toString()
                     new THREE.FileLoader(manager)
                         .setResponseType( 'arraybuffer' )
-                        .load( baseDir + params['scene'] + '/texarray.bin.zip', function ( data ) {
+                        .load( directory + '/texarray.bin.zip', function ( data ) {
                             console.log('unzipping ...')
                             const zip = unzipSync( new Uint8Array( data ) );
                             console.log('done .')
@@ -367,13 +374,16 @@
                     parent.add(cylinder);
                 }
             }
-            
+
             function updateScene(mode,sceneNum) {
                 if ( mode == 'plain' ) {
                     parent.children[0].material.uniforms.tColor.value = null;
                     parent.children[0].material.needsUpdate = true;
+                    let directory = baseDir
+                    if(sceneNum!=-1)
+                        directory = baseDir + sceneNum.toString()
                     loader.load(
-                        baseDir + sceneNum.toString() + '/input.png',
+                        directory + '/input.png',
                         function(texture) {
                             texture.minFilter = THREE.LinearFilter;
                             texture.generateMipmaps = false;
@@ -386,8 +396,11 @@
                         parent.children[i].material.uniforms.tColor.value = null;
                         parent.children[i].material.needsUpdate = true;
                     }
+                    let directory = baseDir
+                    if(sceneNum!=-1)
+                        directory = baseDir + sceneNum.toString()
                     loader.load(
-                        baseDir + sceneNum + '/atlas.png',
+                        directory + '/atlas.png',
                         function(texture) {
                             texture.minFilter = THREE.LinearFilter;
                             texture.generateMipmaps = false;
@@ -401,8 +414,12 @@
                     parent.children[0].material.uniforms.tColor.value = null;
                     parent.children[0].material.uniforms.tDisparity.value = null;
                     parent.children[0].material.needsUpdate = true;
+                    let directory = baseDir
+                    if(sceneNum!=-1)
+                        directory = baseDir + sceneNum.toString()
+
                     loader.load(
-                        baseDir + sceneNum + '/input.png',
+                        directory + '/input.png',
                         function(texture) {
                             texture.minFilter = THREE.LinearFilter;
                             texture.generateMipmaps = false;
@@ -412,7 +429,7 @@
                     );
 
                     loader.load(
-                        baseDir + sceneNum + '/disparity_map.png',
+                        directory + '/disparity_map.png',
                         function(texture) {
                             texture.minFilter = THREE.LinearFilter;
                             texture.generateMipmaps = false;
@@ -440,11 +457,11 @@
                     .1,
                     2000
                 );
-                
+
                 createGeometry(mode);
 
                 updateScene(mode,sceneNum);
-                
+
                 manager.onLoad = function() {
                     scene.add(parent);
                 };
@@ -456,7 +473,7 @@
                 renderer.xr.enabled = true;
                 renderer.xr.setReferenceSpaceType('local');
                 renderer.setAnimationLoop(render);
-                
+
                 var controller1, controller2;
                 function onSelectEnd( event ) {
                     const controller = event.target;
@@ -505,9 +522,9 @@
 
                 renderer.setSize(window.innerWidth, window.innerHeight);
             }
-            
+
             const time0 = clock.getElapsedTime();
-            
+
             function render() {
                 // If we are not presenting move the camera a little so the effect is visible
 
