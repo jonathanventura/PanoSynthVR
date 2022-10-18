@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>PanoSynthVR: View Synthesis from a Single Input Panorama with Multi-Cylinder Images</title>
+<title>PanoSynthVR: Toward Light-weight 360-Degree View Synthesis from a Single Panoramic Input</title>
 <style>
 body {
   font-family: -apple-system, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -78,25 +78,28 @@ color: #3273dc;
 </style>
 </head>
 <body>
-<h1>PanoSynthVR: View Synthesis from a Single Input Panorama with Multi-Cylinder Images</h1>
-<p class=authors>Richa Gadgil<sup>1</sup><br>
-Reesa John<sup>1</sup><br>
-Stefanie Zollmann<sup>2</sup><br>
+<h1>PanoSynthVR: Toward Light-weight 360-Degree View Synthesis from a Single Panoramic Input</h1>
+<p class=authors>John Waidhofer<sup>1</sup><br>
+Richa Gadgil<sup>2</sup><br>
+Anthony Dickson<sup>3</sup><br>
+Stefanie Zollmann<sup>3</sup><br>
 Jonathan Ventura<sup>1</sup></p>
 <p class=authors>
 <sup>1</sup>California Polytechnic State University, San Luis Obispo, CA, USA<br>
-<sup>2</sup>University of Otago, Dunedin, New Zealand</p>
+<sup>2</sup>Carnegie Mellon University, Pittsburgh, PA, USA<br>
+<sup>3</sup>University of Otago, Dunedin, New Zealand<br>
 <hr>
 <div style="">
     <img src="assets/representative_image_small.jpeg" style="max-width: 75%; height: auto; display: block;  margin-left: auto; margin-right: auto;">
 </div>
 <h3 class="links">
-<a href="assets/abstract.pdf">[Paper]</a>  |
+<a href="assets/preprint.pdf">[ISMAR 2022 Conference Paper]</a>  |
+<a href="assets/abstract.pdf">[SIGGRAPH 2021 Poster Abstract]</a>  |
 <a href="https://youtu.be/AMSUpCLFoTk">[Video]</a>  |
 <a href="https://github.com/jonathanventura/PanoSynthVR">Code</a>
 </h3>
 <h3>Abstract</h3>
-<p>We introduce a method to automatically convert a single panoramic input into a multi-cylinder image representation that supports real-time, free-viewpoint view synthesis for virtual reality.  We apply an existing convolutional neural network trained on pinhole images to a cylindrical panorama with wrap padding to ensure agreement between the left and right edges.    The network outputs a stack of semi-transparent panoramas at varying depths which can be easily rendered and composited with over blending.  Initial experiments show that the method produces convincing parallax and cleaner object boundaries than a textured mesh representation.</p>
+<p>We investigate how real-time, 360 degree view synthesis can be achieved on current virtual reality hardware from a single panoramic image input. We introduce a light-weight method to automatically convert a single panoramic input into a multi-cylinder image representation that supports real-time, free-viewpoint view synthesis rendering for virtual reality. We apply an existing convolutional neural network trained on pinhole images to a cylindrical panorama with wrap padding to ensure agreement between the left and right edges. The network outputs a stack of semi-transparent panoramas at varying depths which can be easily rendered and composited with over blending. Quantitative experiments and a user study show that the method produces convincing parallax and fewer artifacts than a textured mesh representation.</p>
 <h3>WebXR examples</h3>
 <p>The WebXR viewer is best experienced in Google Chrome on desktop or on a compatible VR headset.</p>
     <div class="thumbnails">
